@@ -1,0 +1,9 @@
+# git dir lives outside iCloud sync (see CLAUDE.md)
+.git.nosync/
+# Obsidian workspace and plugins are per machine
+.obsidian/
+.trash/
+# exported pages and tool output
+*.html
+.cache/
+.DS_Store

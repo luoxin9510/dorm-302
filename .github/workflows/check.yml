@@ -1,0 +1,33 @@
+name: Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: game
+      - uses: actions/checkout@v4
+        with:
+          repository: luoxin9510/inkwright
+          path: inkwright
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: inkwright/package-lock.json
+      - run: npm ci
+        working-directory: inkwright
+      # Plays every branch per character in both languages, walking both sides of every check.
+      - run: npm run check-ink -- ../game --all --lang zh
+        working-directory: inkwright
+      - run: npm run check-ink -- ../game --all --lang en
+        working-directory: inkwright
