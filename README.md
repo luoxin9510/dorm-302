@@ -11,3 +11,8 @@ A dorm horror adventure in ink, played in Obsidian with the Inkwright plugin's g
 3. 打开 `main.ink`,点"试玩"。Open `main.ink` and hit Play.
 
 剧本正在写。The script is in progress.
+
+## 许可 / License
+
+免费玩,注明作者,不得发布改编版;商业使用请先联系我:[CC BY-NC-ND 4.0](LICENSE.md)。
+Free to play, credit the author, no published derivatives; for commercial use contact me first: [CC BY-NC-ND 4.0](LICENSE.md).
