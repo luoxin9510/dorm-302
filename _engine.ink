@@ -12,6 +12,8 @@ VAR strength = 0
 
 // Resources
 VAR fear = 0
+VAR hp = 10
+VAR battery = 80
 
 // Dice: the engine sets these; saved with the state, so back/load/replay roll the same
 VAR dice_seed = 0

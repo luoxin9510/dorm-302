@@ -10,6 +10,8 @@ skills:
   - { id: strength, name: { zh: 力量, en: Strength }, voice: { stance: { zh: 砸。, en: "Smash it." }, color: "#e26a6a" } }
 resources:
   - { id: fear, name: { zh: 恐惧, en: Fear }, min: 0, max: 100, initial: 0 }
+  - { id: hp, name: { zh: 体力, en: Stamina }, min: 0, max: 10, initial: 10 }
+  - { id: battery, name: { zh: 电量, en: Battery }, min: 0, max: 100, initial: 80 }
 companionResources:
   - { id: fear, name: { zh: 恐惧, en: Fear }, min: 0, max: 100, initial: 20 }
   - { id: trust, name: { zh: 信任, en: Trust }, min: 0, max: 100, initial: 50 }
@@ -27,5 +29,6 @@ modifiers:
 宿舍恐怖冒险的规则配置。上面的属性就是 Inkwright 游戏模式读取的 `GameConfig`,改过之后运行命令"生成游戏引擎 ink"重新生成 `_engine.ink`。
 
 - id 全部英文(ink 变量名、选项标签里用);玩家看到的名字在 `name: { zh, en }` 里。
+- 资源:恐惧是心理血条,体力是身体血条,电量是手机的光。时间和道具是剧本里的普通变量。
 - 技能初始值是暂定的,等角色写完再调。
-- 设计稿见 `docs/设计.md`。
+- 设计稿见 `docs/设计.md`,demo 大纲见 `docs/demo.md`。
