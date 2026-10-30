@@ -29,13 +29,13 @@ VAR lang = "zh"
 ~ return zh
 
 // Companions
-VAR fear_xin = 20
-VAR trust_xin = 50
+VAR fear_xin = 30
+VAR trust_xin = 60
 VAR fear_yanbo = 15
 VAR trust_yanbo = 60
 VAR fear_zhiyong = 35
 VAR trust_zhiyong = 55
-VAR fear_yi = 25
+VAR fear_yi = 15
 VAR trust_yi = 50
 
 EXTERNAL check(skill, difficulty)
@@ -53,16 +53,16 @@ EXTERNAL check(skill, difficulty)
 { who == "yanbo":
     ~ character = yanbo
     ~ reason = 5
-    ~ stamina = 3
-    ~ charm = 2
-    ~ insight = 4
-    ~ strength = 3
+    ~ stamina = 2
+    ~ charm = 3
+    ~ insight = 3
+    ~ strength = 5
 }
 { who == "zhiyong":
     ~ character = zhiyong
     ~ reason = 2
     ~ stamina = 5
-    ~ charm = 3
+    ~ charm = 2
     ~ insight = 2
     ~ strength = 6
 }
@@ -70,9 +70,9 @@ EXTERNAL check(skill, difficulty)
     ~ character = yi
     ~ reason = 4
     ~ stamina = 2
-    ~ charm = 4
+    ~ charm = 3
     ~ insight = 5
-    ~ strength = 2
+    ~ strength = 1
 }
 
 // A skill's current level, by name.
