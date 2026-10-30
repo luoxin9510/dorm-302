@@ -158,7 +158,7 @@ VAR looked = 0           // places poked around in the room before the film (a k
 {t("“这走廊怎么了?”", "‘What about the corridor?’")}
 {t("“没事。”", "‘Nothing.’")}
 {t("女生数到第七扇门,停下了。镜头终于转过来,要给她的脸——", "The girl gets to the seventh door and stops. The camera finally starts to come round, to give you her face—")}
-{t("画面定住了。笔记本的电池灯闪了两下,黑了。", "The picture freezes. The laptop's battery light blinks twice and goes out.")}
+{t("画面定住了。笔记本的电池灯闪了两下,黑了。", "The picture freezes. The laptop's battery light blinks twice and goes out.")} #fx:dark
 {t("“卧槽。”你说。", "‘Oh, come on,’ you say.")}
 {t("烟波拔下充电线看了看,插头是好的。“线接着的。”", "Yanbo pulls the charger out and looks at it. The plug's fine. ‘It was plugged in.’")}
 {t("“那它怎么没电。”", "‘Then how is it dead.’")}
@@ -180,7 +180,7 @@ VAR looked = 0           // places poked around in the room before the film (a k
     {t("“你想啥呢。我是觉得这片拍得烂。”", "‘What are you on about. I just think it's a bad film.’")}
     -> stories
 * [{t("再按一下电源键", "Try the power button again")}]
-    {t("你按了三下。第三下的时候屏幕闪了一下,白的,像照相。然后彻底黑了。", "You press it three times. On the third the screen flashes once, white, like a camera. Then it's dead for good.")}
+    {t("你按了三下。第三下的时候屏幕闪了一下,白的,像照相。然后彻底黑了。", "You press it three times. On the third the screen flashes once, white, like a camera. Then it's dead for good.")} #fx:flash
     {t("怡:“……刚才那个是什么?”", "Yi: ‘...What was that?’")}
     {t("没人回答。", "Nobody answers.")}
     ~ fear += 5
@@ -343,7 +343,7 @@ VAR looked = 0           // places poked around in the room before the film (a k
 {t("“后来那屋就剩三个了。”", "‘After that there were three in that room.’")}
 {t("志勇:“你编的。”", "Zhiyong: ‘You made that up.’")}
 {t("“学长说的!”", "‘The senior said it!’")}
-{t("敲门。三下。", "A knock. Three times.")}
+{t("敲门。三下。", "A knock. Three times.")} #fx:shake
 {t("门外:“几个人?”", "Outside the door: ‘How many of you?’")}
 {t("不是阿姨的声音。你说不上来是谁的声音。", "Not the warden's voice. You couldn't say whose.")}
 {t("志勇已经站起来了,攥着拳头,挡在门和你们中间。没动。", "Zhiyong is already up, fists closed, between the door and the rest of you. Not moving.")}
