@@ -18,5 +18,7 @@ A horror adventure written in ink and played with the Inkwright Obsidian plugin'
 - Story text is the author's creative work: draft with them, don't invent chapters on your own.
 - A failed check must change something (a variable or the available choices); `check-ink --all` warns otherwise.
 
-## Git inside iCloud
-The git dir is `.git.nosync` (iCloud does not sync `.nosync` items); `.git` is a file pointing to it. Keep it that way: never recreate a plain `.git` directory here.
+## Two working copies
+- `~/Developer/dorm-302` — the development copy (plain git clone). Edit, run the headless checks and push from here.
+- `~/Library/Mobile Documents/iCloud~md~obsidian/Documents/dorm-302` — the play copy: the same repo inside iCloud, opened as an Obsidian vault on the phone and the Mac. Its git dir is `.git.nosync` (iCloud does not sync `.nosync` items) and `.git` is a file pointing to it; never recreate a plain `.git` directory there. Bring it up to date with `git pull`; edits made there (e.g. on the phone) are committed and pushed from there.
+- Obsidian CLI (`obsidian vault=dorm-302 ...`) works only once the vault is open in Obsidian on the Mac; never open it from a script with `obsidian://open` (that froze the CLI once). Without it, verify with the headless commands above.
