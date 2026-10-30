@@ -17,9 +17,9 @@ companionResources:
   - { id: trust, name: { zh: 信任, en: Trust }, min: 0, max: 100, initial: 50 }
 characters:
   - { id: xin, name: { zh: 昕, en: Xin }, skills: { reason: 3, stamina: 3, charm: 5, insight: 4, strength: 2 }, companion: { fear: 30, trust: 60 } }
-  - { id: yanbo, name: { zh: 烟波, en: Yanbo }, skills: { reason: 5, stamina: 2, charm: 3, insight: 3, strength: 5 }, companion: { fear: 15, trust: 60 } }
-  - { id: zhiyong, name: { zh: 志勇, en: Zhiyong }, skills: { reason: 2, stamina: 5, charm: 2, insight: 2, strength: 6 }, companion: { fear: 35, trust: 55 } }
-  - { id: yi, name: { zh: 怡, en: Yi }, skills: { reason: 4, stamina: 2, charm: 3, insight: 5, strength: 1 }, companion: { fear: 15, trust: 50 } }
+  - { id: yanbo, playable: false, name: { zh: 烟波, en: Yanbo }, skills: { reason: 5, stamina: 2, charm: 3, insight: 3, strength: 5 }, companion: { fear: 15, trust: 60 } }
+  - { id: zhiyong, playable: false, name: { zh: 志勇, en: Zhiyong }, skills: { reason: 2, stamina: 5, charm: 2, insight: 2, strength: 6 }, companion: { fear: 35, trust: 55 } }
+  - { id: yi, playable: false, name: { zh: 怡, en: Yi }, skills: { reason: 4, stamina: 2, charm: 3, insight: 5, strength: 1 }, companion: { fear: 15, trust: 50 } }
 modifiers:
   - { kind: perStep, resource: fear, step: 25, value: -1, skill: reason, label: fear }
 ---
