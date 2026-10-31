@@ -213,9 +213,9 @@ VAR went_303 = false
 {t("走廊里有人数数。近。", "Counting in the corridor. Close.")}
 {t("“……三个。四个。”", "‘...Three. Four.’")}
 ~ fear += 5
-* [{t("打过去", "Go through it")}]
++ [{t("打过去", "Go through it")}]
     -> fight(dest, 2)
-* [{t("贴着墙绕过去", "Along the wall, round it")} #check:stamina:normal]
++ [{t("贴着墙绕过去", "Along the wall, round it")} #check:stamina:normal]
     { check("stamina", 10) >= 3:
         {t("你们贴着墙,一步一步。它在数,没数到你们。", "You hug the wall, one step at a time. It counts, and doesn't count you.")}
         ~ fear += 5
@@ -226,7 +226,7 @@ VAR went_303 = false
         ~ scare(yi, 15)
     }
     -> arrive(dest)
-* [{t("回 302", "Back to 302")}]
++ [{t("回 302", "Back to 302")}]
     -> hub
 
 // --- fights ------------------------------------------------------------

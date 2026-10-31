@@ -26,8 +26,10 @@ jobs:
           cache-dependency-path: inkwright/package-lock.json
       - run: npm ci
         working-directory: inkwright
-      # Plays every branch per character in both languages, walking both sides of every check.
-      - run: npm run check-ink -- ../game --all --lang zh
+      # Plays every branch per character in both languages, walking both sides of every check
+      # (--novelty: only states new in some respect at their spot are played on, so the whole
+      # night is reachable), then 300 random runs with real dice for the odds and the balance.
+      - run: npm run check-ink -- ../game --all --novelty --max-steps 100000 --random 300 --lang zh
         working-directory: inkwright
-      - run: npm run check-ink -- ../game --all --lang en
+      - run: npm run check-ink -- ../game --all --novelty --max-steps 100000 --random 300 --lang en
         working-directory: inkwright
