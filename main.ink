@@ -14,6 +14,20 @@ VAR bag_heavy = false    // noticed Zhiyong's bag has something heavy in it
 VAR answered = ""        // what was said through the door: four / three / who / none / open
 VAR looked = 0           // places poked around in the room before the film (a knot's own loop does not count as a visit)
 
+// Scene 2 (after the knock): how the room was lit, what the answer did, what was seen.
+VAR light = ""           // on (big light) / torch (phone) / wait (stayed dark, the corridor lit up)
+VAR marked = false       // the building has noticed 302 (big light on, or the door was opened)
+VAR missing = ""         // companion the building took at the knock ("" or yi)
+VAR hidden = ""          // companion the building does not know about (answered three: yi)
+VAR fifth = false        // a fifth person is in the room and the others say he was always there
+VAR counted = false      // the headcount after the knock has happened
+VAR seen_window = false  // the window reflects the corridor, not the room
+VAR seen_clock = false   // the wall clock stuck at 8:59
+VAR seen_uniform = false // five uniforms on the balcony line
+VAR seen_screen = false  // the dead laptop showing the frozen frame
+VAR doors = 0            // doors counted in the corridor
+VAR shone = 0            // things the torch was pointed at
+
 -> dusk
 
 // --- helpers -------------------------------------------------------------
@@ -389,5 +403,249 @@ VAR looked = 0           // places poked around in the room before the film (a k
 {t("“阿姨不上来。”烟波说。", "‘She doesn't come up,’ Yanbo says.")}
 {t("“……我知道。”", "‘...I know.’")}
 {t("没人接话。", "Nobody answers.")}
-{t("(第一场到这里。后面还没写。)", "(End of scene one. The rest isn't written yet.)")}
+// What the answer did. Nobody can see it yet.
+{ answered == "four":
+    ~ missing = "yi"
+}
+{ answered == "three":
+    ~ hidden = "yi"
+}
+{ answered == "who" || answered == "none":
+    ~ fifth = true
+}
+{ answered == "open":
+    ~ marked = true
+}
+-> light_choice
+
+// --- scene 2: the light -----------------------------------------------------
+
+=== light_choice ===
+{t("志勇站起来,摸着墙往门边走。你知道他要干什么,大灯开关就在门边上。", "Zhiyong gets up and feels his way along the wall towards the door. You know what he's after. The switch for the big light is right by the door.")}
+{t("“别开。”烟波说。", "‘Don't,’ Yanbo says.")}
+{t("“黑着我待不下去了。”志勇的声音不对,有点高。“要看就看清楚。”", "‘I can't sit in the dark any more.’ Zhiyong's voice is off, pitched high. ‘If we're going to look, look properly.’")}
+{t("“开了楼下就看得见。”", "‘Turn it on and they see us from downstairs.’")}
+{t("“楼下还有人吗?”", "‘Is there anyone downstairs?’")}
+{t("没人答得上来。志勇的手已经在墙上找到开关了,你听见指甲刮过塑料的声音。", "Nobody has an answer. Zhiyong's hand has found the switch; you hear a fingernail scrape plastic.")}
+{reason >= 3: {t("开了灯就知道了。不开,也拖不过今晚。", "Turn it on and you'll know. Leave it off and you still won't get through the night.")} #voice:reason}
+{insight >= 4: {t("门缝底下一点光都没有。刚才还有一点。", "Not a trace of light under the door. There was some a minute ago.")} #voice:insight}
+* [{t("抢先一步,自己按下开关", "Get there first and hit the switch yourself")}]
+    ~ light = "on"
+    ~ marked = true
+    {t("你从他胳膊底下伸过去,按了。要开也是你开。", "You reach under his arm and press it. If anyone turns it on, it's you.")}
+    ~ trust(zhiyong, 5)
+    -> lit
+* [{t("“开吧。”让志勇按", "‘Go on.’ Let Zhiyong press it")}]
+    ~ light = "on"
+    ~ marked = true
+    {t("“开吧。”你说。志勇按了。", "‘Go on,’ you say. Zhiyong presses it.")}
+    ~ scare(zhiyong, -5)
+    -> lit
+* [{t("拉住他的手腕,打开手机电筒", "Grab his wrist and turn on your phone torch")}]
+    ~ light = "torch"
+    {t("你抓住他手腕。“别开大灯。用这个。”手机电筒亮了,白得刺眼,照在志勇脸上。他眯着眼看你,没甩开。", "You catch his wrist. ‘Not the big light. Use this.’ The phone torch comes on, white and harsh, straight in Zhiyong's face. He squints at you and doesn't shake you off.")}
+    ~ battery = clamp(battery - 5, 0, 100)
+    ~ trust(zhiyong, 5)
+    -> torch
+* [{t("“谁都别动。先听。”", "‘Nobody move. Listen first.’")}]
+    ~ light = "wait"
+    {t("“谁都别动。”你说,“先听。”", "‘Nobody move,’ you say. ‘Listen first.’")}
+    {t("志勇的手停在开关上。没按。", "Zhiyong's hand stays on the switch. Doesn't press.")}
+    -> wait
+
+// The big light: everything at once.
+=== lit ===
+{t("灯亮了。", "The light comes on.")} #fx:flash
+{t("日光灯闪了两下才稳住,屋里一下子全白了:辣条袋子、烟波床上的衣服山、床边一双鞋。", "The fluorescent tube flickers twice before it holds, and the room goes white all at once: the spicy-strip bag, the clothes pile on Yanbo's bed, a pair of shoes by the bed.")}
+-> headcount ->
+{t("然后你看见窗户。", "Then you see the window.")}
+{t("对面教学楼的灯没了。一盏都没有。窗玻璃黑得像墙,玻璃里映着一屋子人,还有……", "The teaching block's lights are gone. Not one left. The glass is black as a wall, and in it a room full of people, and...")}
+{t("映出来的不是这间屋子。是走廊。你们站在一条走廊里,身后一排门。", "It isn't this room in the glass. It's the corridor. You're all standing in a corridor, a row of doors behind you.")}
+~ seen_window = true
+~ fear += 10
+{t("“别看窗户。”烟波说。他自己也在看。", "‘Don't look at the window,’ Yanbo says. He's looking too.")}
+{t("墙上的钟,8:59。秒针在 12 上面抖,过不去。", "The clock on the wall: 8:59. The second hand shivers at the 12 and can't get past.")}
+~ seen_clock = true
+{t("桌上那台没电的笔记本,屏幕亮着。停在那一帧:走廊,尽头绿色的安全出口灯,最后那扇门矮一点。", "The dead laptop on the desk has its screen on. Frozen on that frame: the corridor, the green exit sign at the end, the last door a little lower than the others.")}
+~ seen_screen = true
+{clue_frame: {t("八扇。你数过。", "Eight. You counted.")} #voice:insight}
+{t("阳台上的校服还在。你数了一遍。五件。", "The uniforms are still on the balcony line. You count. Five.")}
+{window_open: {t("刚才你出去拿晾衣杆的时候是四件。", "When you went out for the pole there were four.")}}
+~ seen_uniform = true
+~ fear += 5
+~ scare(yi, 10)
+~ scare(zhiyong, 10)
+~ scare(yanbo, 5)
+{t("“楼外看得见了。”烟波说。没人问看得见什么。", "‘Now it can be seen from outside,’ Yanbo says. Nobody asks by what.")}
+-> corridor
+
+// The phone torch: one circle of light at a time.
+=== torch ===
+{
+    - shone == 0:
+        {t("电筒的光一小圈,照到哪儿哪儿是白的,别的地方更黑。", "The torch is one small circle. Wherever it lands goes white; everywhere else gets darker.")}
+    - shone < 3:
+        {t("电量 {battery}%。", "Battery {battery}%.")}
+    - else:
+        {t("志勇:“差不多了吧。”", "Zhiyong: ‘That's enough, isn't it.’")}
+}
+~ shone += 1
+* [{t("照一圈人", "Shine it round at everyone")}]
+    ~ battery = clamp(battery - 5, 0, 100)
+    -> headcount ->
+    -> torch
+* [{t("照窗户", "Shine it at the window")} #check:insight:easy]
+    ~ battery = clamp(battery - 5, 0, 100)
+    {t("光打在玻璃上,反回来一个白点。", "The beam hits the glass and comes back as a white spot.")}
+    { check("insight", 8) >= 3:
+        {t("白点后面,对面教学楼一盏灯都没有。玻璃里映出来的东西,你看了两遍才明白:不是这间屋子。是走廊,一排门。", "Behind the spot, not one light in the teaching block. What the glass reflects takes you two looks: not this room. A corridor, a row of doors.")}
+        ~ seen_window = true
+        ~ fear += 10
+    - else:
+        {t("光太晃,你只看见自己举着手机的影子。", "Too much glare; all you see is your own shadow holding the phone.")}
+        ~ fear += 5
+    }
+    -> torch
+* [{t("照墙上的钟", "Shine it at the clock")}]
+    ~ battery = clamp(battery - 5, 0, 100)
+    {t("8:59。秒针在 12 上面抖,过不去。", "8:59. The second hand shivers at the 12 and can't get past.")}
+    ~ seen_clock = true
+    {t("怡:“……它一直是这个时间?”“手机也是。”", "Yi: ‘...Has it said that the whole time?’ ‘Phone says the same.’")}
+    ~ fear += 5
+    -> torch
+* [{t("照阳台", "Shine it at the balcony")} #check:insight:normal]
+    ~ battery = clamp(battery - 5, 0, 100)
+    {t("光穿过阳台门,照在晾衣绳上。校服在光里一动不动。", "The beam goes through the balcony door onto the line. The uniforms hang dead still in it.")}
+    { check("insight", 10) >= 3:
+        {t("你数了一遍。五件。", "You count. Five.")}
+        {window_open: {t("刚才是四件。你出去拿晾衣杆的时候数过。", "There were four. You counted when you went out for the pole.")}}
+        ~ seen_uniform = true
+        ~ fear += 10
+    - else:
+        {t("数到一半光晃了一下,你没数清,也不想再数一遍。", "Halfway through the count the beam wavers and you lose it. You don't want to count again.")}
+        ~ fear += 5
+    }
+    -> torch
+* [{t("照桌上的笔记本", "Shine it at the laptop")}]
+    ~ battery = clamp(battery - 5, 0, 100)
+    {t("不用照。屏幕自己亮着。停在那一帧:走廊,尽头绿色的安全出口灯,最后那扇门矮一点。", "No need. The screen is on by itself. Frozen on that frame: the corridor, the green exit sign at the end, the last door a little lower.")}
+    ~ seen_screen = true
+    {clue_frame: {t("八扇。你数过。", "Eight. You counted.")} #voice:insight}
+    {t("烟波伸手合上了它。光从盖子缝里漏出来。", "Yanbo reaches over and closes the lid. Light leaks out of the gap.")}
+    ~ fear += 5
+    -> torch
++ [{t("去门口", "Go to the door")}]
+    -> corridor
+
+// Staying dark: the building moves first.
+=== wait ===
+{t("黑着。谁都没动。", "Dark. Nobody moves.")}
+{t("你听见自己的呼吸,听见志勇抖腿,听见怡吞了一口口水。", "You hear your own breathing, Zhiyong's leg jiggling, Yi swallowing.")}
+{t("楼里什么声音都没有。没有水管,没有电视,没有拖鞋。", "The building makes no sound at all. No pipes, no television, no slippers.")}
+{t("然后门缝底下亮了。", "Then the gap under the door lights up.")}
+{t("一条黄绿色的光,从门底下进来,躺在地板上。走廊灯亮了。", "A strip of yellow-green light comes in under the door and lies on the floor. The corridor light is on.")}
+~ fear += 10
+~ scare(yi, 10)
+~ scare(zhiyong, 10)
+~ scare(yanbo, 10)
+{insight >= 4: {t("晚自习的时候走廊灯是不灭的。现在是晚自习吗。", "The corridor light never goes off during evening study. Is it evening study now.")} #voice:insight}
+{t("志勇的手还在开关上。“开不开。”", "Zhiyong's hand is still on the switch. ‘On or not.’")}
+{t("“不开。”烟波说,“外面亮了,里面别亮。”", "‘Not,’ Yanbo says. ‘It's lit out there. Keep it dark in here.’")}
+-> headcount ->
+{t("地板上那条光一直在。没人去踩它。", "The strip of light stays on the floor. Nobody steps on it.")}
+-> corridor
+
+// Who is in the room now. A tunnel: the caller goes on from where it was.
+=== headcount ===
+~ counted = true
+{
+    - missing == "yi":
+        { light == "wait":
+            {t("“都在吧?”你小声问。“在。”志勇。“在。”烟波。", "‘Everyone here?’ you ask under your breath. ‘Here.’ Zhiyong. ‘Here.’ Yanbo.")}
+            {t("你等怡那句慢半拍的“在”。没有。", "You wait for Yi's half-beat-late ‘here’. It doesn't come.")}
+            {t("“怡?”", "‘Yi?’")}
+            {t("床那边一点动静都没有。你伸手过去摸,被子是平的,还是温的。", "Nothing from the bed. You reach over: the quilt is flat, and still warm.")}
+        - else:
+            {t("你床上没人。被子上一个坐出来的坑,怡的鞋好好地摆在床边,一只正一只歪。", "Your bed is empty. A dent in the quilt where someone sat, and Yi's shoes side by side on the floor, one straight, one crooked.")}
+            {t("“怡呢?”", "‘Where's Yi?’")}
+            {t("志勇:“他刚才还——”", "Zhiyong: ‘He was just—’")}
+            {t("“别说话。”烟波说。", "‘Don't,’ Yanbo says.")}
+        }
+        {t("门外说五个。你答了四个。现在三个。", "Outside said five. You said four. Now there are three.")}
+        {inv ? bank: {t("充电宝还在你兜里。他的东西留下了,人没有。", "The power bank is still in your pocket. His things stayed. He didn't.")}}
+        ~ fear += 20
+        ~ scare(zhiyong, 15)
+        ~ scare(yanbo, 10)
+        {reason >= 3: {t("“后来那屋就剩三个了。”你自己讲的。", "‘After that there were three in that room.’ You told that one yourself.")} #voice:reason}
+    - fifth:
+        { light == "wait":
+            {t("“都在吧?”你小声问。“在。”志勇。“在。”烟波。“在。”怡。", "‘Everyone here?’ you ask under your breath. ‘Here.’ Zhiyong. ‘Here.’ Yanbo. ‘Here.’ Yi.")}
+            {t("“在。”", "‘Here.’")}
+            {t("第五个声音。从烟波床那边来的,很近。", "A fifth voice. From over by Yanbo's bed, close.")}
+            {t("没有人问那是谁。", "Nobody asks who that is.")}
+        - else:
+            {t("烟波床上的衣服堆里坐着一个人。校服,短头发,低着头看地。", "Someone is sitting in the clothes pile on Yanbo's bed. School uniform, cropped hair, looking at the floor.")}
+            {t("你不认识他。", "You don't know him.")}
+            {t("“阿泽你别坐那儿,”志勇说,“那床上有东西在长。”", "‘Aze, don't sit there,’ Zhiyong says. ‘Something's growing on that bed.’")}
+            {t("“……谁?”", "‘...Who?’")}
+            {t("烟波看你一眼:“阿泽啊。你傻了?”", "Yanbo gives you a look. ‘Aze. Have you lost it?’")}
+            {t("那个人没抬头。", "He doesn't look up.")}
+        }
+        {t("门外说五个。现在五个了。", "Outside said five. Now there are five.")} #fx:pulse
+        ~ fear += 25
+        {insight >= 4: {t("另外三个人谁也没觉得不对。只有你记得屋里本来几个人。", "None of the other three think anything is wrong. Only you remember how many there were.")} #voice:insight}
+    - hidden == "yi":
+        {t("四个人,一个不少。", "Four. Nobody missing.")}
+        {t("怡坐在你床上,两只手夹在膝盖中间。“刚才你说三个的时候,”他说得很慢,“我有一种……被跳过去的感觉。像点名点到我,没停。”", "Yi sits on your bed with his hands pressed between his knees. ‘When you said three,’ he says slowly, ‘I had this... feeling of being skipped. Like roll call got to me and didn't stop.’")}
+        {t("“什么意思。”", "‘Meaning what.’")}
+        {t("“不知道。先排除一下是我多想。”", "‘I don't know. Let's rule out that I'm imagining it.’")}
+        ~ fear += 5
+        ~ scare(yi, 10)
+        {reason >= 3: {t("它数的是三个。它不知道第四个是谁。", "It counted three. It doesn't know who the fourth is.")} #voice:reason}
+    - else:
+        {t("四个人,一个不少。志勇、烟波、怡。都在。", "Four. Nobody missing. Zhiyong, Yanbo, Yi. All here.")}
+        { answered == "open":
+            {t("可是你开过门了。走廊看见你们了。", "But you opened the door. The corridor has seen you.")}
+            ~ fear += 5
+        }
+}
+->->
+
+// The corridor: counting the doors. End of scene two.
+=== corridor ===
+{ not counted:
+    -> headcount ->
+}
+{t("{missing == "yi":三|{fifth:五|四}}个人挤在门边。志勇拧开反锁,把门拉开一条缝。", "{missing == "yi":Three|{fifth:Five|Four}} of you bunch up at the door. Zhiyong turns the lock and pulls it open a crack.")}
+{ light == "wait":
+    {t("门缝里的光一下子宽了。", "The strip of light widens all at once.")}
+- else:
+    {t("走廊里的灯亮着。刚才门底下明明一点光都没有。", "The corridor lights are on. A minute ago there was no light under the door at all.")}
+}
+{t("黄绿色的日光灯,一根接一根,照到走廊尽头。尽头一个绿色的安全出口灯。", "Yellow-green tubes, one after another, all the way down. A green exit sign at the end.")}
+{t("没有人。没有声音。每扇门都关着。", "Nobody. No sound. Every door shut.")}
+{t("你数门。", "You count the doors.")}
+{t("三〇一。三〇二,你们的。三〇三,封条还在。三〇四。三〇五。三〇六。三〇七。", "301. 302, yours. 303, the seal still on it. 304. 305. 306. 307.")}
+{t("走廊尽头,安全出口灯底下,还有一扇。矮一点。门上没有牌子。", "At the end, under the exit sign, one more. A little lower. No number on it.")}
+{t("第八扇。", "The eighth.")}
+~ doors = 8
+~ fear += 10
+{clue_frame: {t("片子里那条走廊。你现在站在门口。", "The corridor from the film. You're standing at the mouth of it.")} #voice:insight}
+{t("“白天是七扇。”烟波说。他讲的故事。他的声音也不对了。", "‘Seven in the daytime,’ Yanbo says. His story. His voice isn't right either.")}
+{ missing == "yi":
+    {t("没人提回屋。也没人说怡。", "Nobody says go back in. Nobody says Yi.")}
+- else:
+    {t("怡:“……我倾向于先回屋。”", "Yi: ‘...I'd lean towards going back in first.’")}
+}
+{ fifth:
+    {t("“阿泽,进来。”志勇说。那个人进来了。", "‘Aze, get in,’ Zhiyong says. He comes in.")}
+}
+{t("志勇把门关上,反锁。锁舌咔哒一声。", "Zhiyong shuts the door and locks it. The bolt clicks.")}
+{t("8:59。手机没信号。", "8:59. No signal.")}
+{ marked:
+    {t("门缝底下那条光闪了一下。像有什么从底下走过去。", "The light under the door flickers once. Like something passed along it.")}
+}
+{reason >= 3: {t("出不去了。先弄清楚这层楼要什么。", "No way out. First work out what this floor wants.")} #voice:reason}
+{strength >= 5: {t("要出去,得走那条走廊。", "To get out, you walk that corridor.")} #voice:strength}
+{t("(第二场到这里。下一场从 302 出发,选去哪。)", "(End of scene two. The next one starts from 302: pick where to go.)")}
 -> END
