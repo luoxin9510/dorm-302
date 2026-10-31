@@ -14,9 +14,10 @@ VAR strength = 0
 VAR fear = 0
 VAR hp = 10
 VAR battery = 80
+VAR dawn = 8
 
 // Items: what the character carries (`~ inv += phone`, `{inv ? phone: …}`)
-LIST items = phone, pepper, band, bank, notebook, pole
+LIST items = phone, pepper, band, bank, notebook, pole, key, lighter, card, ledger
 VAR inv = ()
 
 // Dice: the engine sets these; saved with the state, so back/load/replay roll the same

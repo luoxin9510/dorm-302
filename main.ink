@@ -2,6 +2,7 @@
 // The player is always Xin ("你"); Yanbo, Zhiyong and Yi are companions. The engine file is
 // generated from game.md. Scene 1 (dusk to the knock) is a draft to play and rewrite.
 INCLUDE _engine.ink
+INCLUDE scene3.ink
 
 // Items (LIST items, VAR inv) are declared in game.md and come in through _engine.ink.
 
@@ -649,5 +650,4 @@ VAR shone = 0            // things the torch was pointed at
 }
 {reason >= 3: {t("出不去了。先弄清楚这层楼要什么。", "No way out. First work out what this floor wants.")} #voice:reason}
 {strength >= 5: {t("要出去,得走那条走廊。", "To get out, you walk that corridor.")} #voice:strength}
-{t("(第二场到这里。下一场从 302 出发,选去哪。)", "(End of scene two. The next one starts from 302: pick where to go.)")}
--> END
+-> hub
