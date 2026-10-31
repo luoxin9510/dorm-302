@@ -17,7 +17,7 @@ VAR looked = 0           // places poked around in the room before the film (a k
 // Scene 2 (after the knock): how the room was lit, what the answer did, what was seen.
 VAR light = ""           // on (big light) / torch (phone) / wait (stayed dark, the corridor lit up)
 VAR marked = false       // the building has noticed 302 (big light on, or the door was opened)
-VAR missing = ""         // companion the building took at the knock ("" or yi)
+VAR erased = ""          // companion whose place the room cleared at the knock ("" or yi): he stays, his things do not
 VAR hidden = ""          // companion the building does not know about (answered three: yi)
 VAR fifth = false        // a fifth person is in the room and the others say he was always there
 VAR counted = false      // the headcount after the knock has happened
@@ -405,7 +405,7 @@ VAR shone = 0            // things the torch was pointed at
 {t("没人接话。", "Nobody answers.")}
 // What the answer did. Nobody can see it yet.
 { answered == "four":
-    ~ missing = "yi"
+    ~ erased = "yi"
 }
 { answered == "three":
     ~ hidden = "yi"
@@ -559,24 +559,26 @@ VAR shone = 0            // things the torch was pointed at
 === headcount ===
 ~ counted = true
 {
-    - missing == "yi":
+    - erased == "yi":
         { light == "wait":
-            {t("“都在吧?”你小声问。“在。”志勇。“在。”烟波。", "‘Everyone here?’ you ask under your breath. ‘Here.’ Zhiyong. ‘Here.’ Yanbo.")}
-            {t("你等怡那句慢半拍的“在”。没有。", "You wait for Yi's half-beat-late ‘here’. It doesn't come.")}
-            {t("“怡?”", "‘Yi?’")}
-            {t("床那边一点动静都没有。你伸手过去摸,被子是平的,还是温的。", "Nothing from the bed. You reach over: the quilt is flat, and still warm.")}
+            {t("“都在吧?”你小声问。“在。”志勇。“在。”烟波。慢半拍,“在。”怡。", "‘Everyone here?’ you ask under your breath. ‘Here.’ Zhiyong. ‘Here.’ Yanbo. Half a beat late: ‘Here.’ Yi.")}
+            {t("四个。你松了一口气,没松完。", "Four. You let out a breath, not all of it.")}
+            {t("黑暗里怡在床边摸来摸去。“……我包呢。”又摸。“我鞋呢。”", "In the dark Yi pats around by the bed. ‘...Where's my bag.’ More patting. ‘Where are my shoes.’")}
+            {t("你伸手过去。床边的地板是空的。他坐过的地方,被子平平整整,像没人坐过。", "You reach over. The floor by the bed is bare. Where he sat, the quilt lies smooth, as if nobody ever had.")}
         - else:
-            {t("你床上没人。被子上一个坐出来的坑,怡的鞋好好地摆在床边,一只正一只歪。", "Your bed is empty. A dent in the quilt where someone sat, and Yi's shoes side by side on the floor, one straight, one crooked.")}
-            {t("“怡呢?”", "‘Where's Yi?’")}
-            {t("志勇:“他刚才还——”", "Zhiyong: ‘He was just—’")}
-            {t("“别说话。”烟波说。", "‘Don't,’ Yanbo says.")}
+            {t("怡就站在你床边,手里攥着手机,人好好的。脚上只有袜子。", "Yi is standing right by your bed, phone clutched in his hand, all in one piece. Socks, no shoes.")}
+            {t("他的鞋没了。椅背上的外套没了,桌上那杯水没了,包也没了。你床上他坐出来的坑,平了。", "His shoes are gone. The jacket on the chair back is gone, the cup of water on the desk, the bag. The dent he sat into your quilt has smoothed out.")}
+            {t("屋里没有一样东西说他来过。", "Nothing in the room says he was ever here.")}
+            {t("怡低头看自己的脚,说得很轻:“我没走。”", "Yi looks down at his feet. Very quietly: ‘I didn't leave.’")}
         }
-        {t("门外说五个。你答了四个。现在三个。", "Outside said five. You said four. Now there are three.")}
-        {inv ? bank: {t("充电宝还在你兜里。他的东西留下了,人没有。", "The power bank is still in your pocket. His things stayed. He didn't.")}}
+        {t("门外说五个。你答了四个。屋里是四个,一个不少。可这屋已经把他送走了。", "Outside said five. You said four. Four in the room, nobody missing. But the room has already seen him out.")}
+        {inv ? bank: {t("充电宝还在你兜里。他带来的东西,就剩你手里这几样。", "The power bank is still in your pocket. Of what he brought, only what's in your hands is left.")}}
         ~ fear += 20
-        ~ scare(zhiyong, 15)
+        ~ scare(yi, 25)
+        ~ scare(zhiyong, 10)
         ~ scare(yanbo, 10)
-        {reason >= 3: {t("“后来那屋就剩三个了。”你自己讲的。", "‘After that there were three in that room.’ You told that one yourself.")} #voice:reason}
+        {t("志勇:“谁他妈动他东西了。”没人答。", "Zhiyong: ‘Who the fuck touched his stuff.’ Nobody answers.")}
+        {reason >= 3: {t("楼下登记本。今晚来 302 的,写的谁。", "The visitors' book downstairs. Who's written in for 302 tonight.")} #voice:reason}
     - fifth:
         { light == "wait":
             {t("“都在吧?”你小声问。“在。”志勇。“在。”烟波。“在。”怡。", "‘Everyone here?’ you ask under your breath. ‘Here.’ Zhiyong. ‘Here.’ Yanbo. ‘Here.’ Yi.")}
@@ -616,7 +618,7 @@ VAR shone = 0            // things the torch was pointed at
 { not counted:
     -> headcount ->
 }
-{t("{missing == "yi":三|{fifth:五|四}}个人挤在门边。志勇拧开反锁,把门拉开一条缝。", "{missing == "yi":Three|{fifth:Five|Four}} of you bunch up at the door. Zhiyong turns the lock and pulls it open a crack.")}
+{t("{fifth:五|四}个人挤在门边。志勇拧开反锁,把门拉开一条缝。", "{fifth:Five|Four} of you bunch up at the door. Zhiyong turns the lock and pulls it open a crack.")}
 { light == "wait":
     {t("门缝里的光一下子宽了。", "The strip of light widens all at once.")}
 - else:
@@ -632,8 +634,8 @@ VAR shone = 0            // things the torch was pointed at
 ~ fear += 10
 {clue_frame: {t("片子里那条走廊。你现在站在门口。", "The corridor from the film. You're standing at the mouth of it.")} #voice:insight}
 {t("“白天是七扇。”烟波说。他讲的故事。他的声音也不对了。", "‘Seven in the daytime,’ Yanbo says. His story. His voice isn't right either.")}
-{ missing == "yi":
-    {t("没人提回屋。也没人说怡。", "Nobody says go back in. Nobody says Yi.")}
+{ erased == "yi":
+    {t("怡:“……我倾向于先回屋。”停了一下。“……如果它还让我进。”", "Yi: ‘...I'd lean towards going back in first.’ A pause. ‘...If it still lets me in.’")}
 - else:
     {t("怡:“……我倾向于先回屋。”", "Yi: ‘...I'd lean towards going back in first.’")}
 }
