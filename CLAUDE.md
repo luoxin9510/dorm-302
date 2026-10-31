@@ -16,7 +16,7 @@ A horror adventure written in ink and played with the Inkwright Obsidian plugin'
 - Ids and ink identifiers are English (`#check:insight:normal`, `#voice:reason`); player-facing text is bilingual inline: `{t("中文", "English")}`.
 - Everyone except the author (昕) appears under a pseudonym (烟波, 志勇, 怡); real names never enter this repo.
 - Story text is the author's creative work: draft with them, don't invent chapters on your own.
-- Writing workflow: `docs/写作.md` (prose rules), `docs/人物.md` (character sheets, voice table), `docs/学习-游戏剧本怎么写.md` (Sasaki's book, applied). `/meeting [人物|场景|台词|剧情] <议题>` runs a planning meeting: the main session is the planner, `writer` subagents (`.claude/agents/writer.md`) draft from assigned angles, `critic` reviews, the planner writes minutes with a recommended draft and open decisions to `docs/会议/`. Minutes are proposals; the author decides what goes into the ink.
+- Writing workflow: `docs/写作.md` (prose rules), `docs/人物.md` (character sheets, voice table), `docs/学习-游戏剧本怎么写.md` (Sasaki's book, applied). `/meeting [人物|场景|台词|剧情] <议题>` runs a planning meeting: the main session is the planner, three fixed writer subagents with different styles (`writer-plain`, `writer-talk`, `writer-archive` in `.claude/agents/`) draft from the same brief, `critic` reviews, the planner writes minutes with a recommended draft and open decisions to `docs/会议/`. Minutes are proposals; the author decides what goes into the ink.
 - A failed check must change something (a variable or the available choices); `check-ink --all` warns otherwise.
 
 ## Two working copies
