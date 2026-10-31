@@ -3,9 +3,7 @@
 // generated from game.md. Scene 1 (dusk to the knock) is a draft to play and rewrite.
 INCLUDE _engine.ink
 
-// Things you carry. The HUD does not show them yet; the text does.
-LIST items = phone, pepper, band, bank, notebook, pole
-VAR inv = (phone)
+// Items (LIST items, VAR inv) are declared in game.md and come in through _engine.ink.
 
 // What the player has seen or done (the later scenes read these).
 VAR clue_frame = false   // counted the doors in the frozen movie frame

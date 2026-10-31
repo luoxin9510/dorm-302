@@ -15,6 +15,10 @@ VAR fear = 0
 VAR hp = 10
 VAR battery = 80
 
+// Items: what the character carries (`~ inv += phone`, `{inv ? phone: …}`)
+LIST items = phone, pepper, band, bank, notebook, pole
+VAR inv = ()
+
 // Dice: the engine sets these; saved with the state, so back/load/replay roll the same
 VAR dice_seed = 0
 VAR dice_rolls = 0
@@ -49,6 +53,7 @@ EXTERNAL check(skill, difficulty)
     ~ charm = 5
     ~ insight = 4
     ~ strength = 2
+    ~ inv = (phone)
 }
 { who == "yanbo":
     ~ character = yanbo
@@ -57,6 +62,7 @@ EXTERNAL check(skill, difficulty)
     ~ charm = 3
     ~ insight = 3
     ~ strength = 5
+    ~ inv = ()
 }
 { who == "zhiyong":
     ~ character = zhiyong
@@ -65,6 +71,7 @@ EXTERNAL check(skill, difficulty)
     ~ charm = 2
     ~ insight = 2
     ~ strength = 6
+    ~ inv = ()
 }
 { who == "yi":
     ~ character = yi
@@ -73,6 +80,7 @@ EXTERNAL check(skill, difficulty)
     ~ charm = 3
     ~ insight = 5
     ~ strength = 1
+    ~ inv = ()
 }
 
 // A skill's current level, by name.
