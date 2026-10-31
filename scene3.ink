@@ -17,6 +17,22 @@ VAR went_toilet = false
 VAR went_stairs = false
 VAR went_office = false
 VAR went_303 = false
+VAR noticed = false        // the building took note of you (the visitors' book moved, a name written back)
+
+// The water room: Okiku at the basin, counting; the two from 304.
+VAR datou = ""             // 大头 (304): "" not met / stall (hiding) / stairs (ran for the stairs) / dead
+VAR okiku = 0              // 0 not met / 1 counting at the basin / 2 released (the tenth was counted for her)
+VAR count = 0              // where her count stands during the rescue (she takes someone at nine)
+VAR datou_out = false      // 大头 is out of the stall
+VAR held = false           // she was held off this round
+VAR okiku_known = false    // seen what she counts: what is in the water, one short
+VAR clue_number = false    // the old uniform in the basin: a student number inside the collar
+
+// The warden's office.
+VAR aunt_clue = false      // the duty log: "8:59 went up"
+VAR ledger_seen = false    // read the visitors' book
+VAR aze_known = false      // the crossed-out name, room 303, every night for years
+VAR yi_written = false     // wrote Yi's name back into the book (erased branch)
 
 // --- clock ---------------------------------------------------------------
 
@@ -60,6 +76,30 @@ VAR went_303 = false
 }
 ~ return "{n}"
 
+// Her count, the way they hear it.
+=== function jp(n) ===
+{
+    - n == 1:
+        ~ return "いち"
+    - n == 2:
+        ~ return "に"
+    - n == 3:
+        ~ return "さん"
+    - n == 4:
+        ~ return "し"
+    - n == 5:
+        ~ return "ご"
+    - n == 6:
+        ~ return "ろく"
+    - n == 7:
+        ~ return "しち"
+    - n == 8:
+        ~ return "はち"
+    - n == 9:
+        ~ return "きゅう"
+}
+~ return "{n}"
+
 === function scare_all(d) ===
 ~ scare(yanbo, d)
 ~ scare(zhiyong, d)
@@ -93,8 +133,12 @@ VAR went_303 = false
         ~ fear += 5
     - back == 3:
         {t("回到 302。{clock()}。", "Back in 302. {clock()}.")}
-        { erased == "yi":
+        {
+        - erased == "yi" and not yi_written:
             {t("门口摆着一双鞋。怡的。鞋尖朝屋里,摆得整整齐齐。怡没有去穿。", "A pair of shoes by the door. Yi's. Toes pointing into the room, set down neatly. Yi doesn't go and put them on.")}
+        - erased == "yi":
+            {t("门口摆着怡的鞋。鞋尖朝外,像他自己脱的。他过去穿上了。“……谢了。”", "Yi's shoes by the door. Toes pointing out, as if he'd taken them off himself. He goes and puts them on. ‘...Thanks.’")}
+            ~ scare(yi, -15)
         - else:
             {t("门口多了一双鞋。谁的都不是。鞋尖朝屋里。", "There's an extra pair of shoes by the door. Nobody's. Toes pointing into the room.")}
         }
@@ -134,6 +178,8 @@ VAR went_303 = false
 + [{t("去 303", "Room 303")}]
     -> corridor_walk("room303")
 + {doors == 8} [{t("第八扇门", "The eighth door")} #needs:card]
+    -> corridor_walk("door8")
++ {doors == 8 and inv ? ledger and not (inv ? card)} [{t("第八扇门,带着登记本", "The eighth door, with the visitors' book")}]
     -> corridor_walk("door8")
 + [{t("用充电宝充电", "Charge the phone from the power bank")} #needs:bank]
     ~ inv -= bank
@@ -185,10 +231,10 @@ VAR went_303 = false
     ~ corridor_known = true
     -> first_contact(dest)
 }
-{ it_gone == 0 and marked and back % 2 == 0:
+{ it_gone == 0 and (marked or noticed) and back % 2 == 0:
     -> ambush(dest)
 }
-{ it_gone == 0 and not marked and back % 3 == 0:
+{ it_gone == 0 and not (marked or noticed) and back % 3 == 0:
     -> ambush(dest)
 }
 -> arrive(dest)
@@ -409,9 +455,228 @@ VAR went_303 = false
 -> hub
 
 === water ===
+{ went_water: -> water_again }
 ~ went_water = true
-{t("水房。龙头全关着,池子是湿的。", "The water room. Every tap off, the basins wet.")}
-{t("(水房下一稿写。)", "(The water room is written in the next draft.)")}
+{t("水房。六个龙头全拧死了。长池子却是满的,水平平的,一直到池沿。", "The water room. All six taps screwed shut. The long basin is full though, the water flat, right up to the rim.")}
+{t("水面上漂着校服。一件,一件,一件。", "Uniforms float on it. One, and one, and one.")}
+{ tap_seen:
+    {t("排水口边上那圈白的还在。你这次蹲下去看了。瓷片。碎成末的瓷片。", "The white ring round the drain is still there. This time you crouch and look. Porcelain. Porcelain ground to dust.")}
+- else:
+    {t("排水口边上一圈白的,像肥皂沫。不是肥皂沫。是瓷片,碎成了末。", "A white ring round the drain, like soap scum. Not soap scum. Porcelain, ground to dust.")}
+}
+{t("镜子蒙着水汽。只有一块是干净的,擦过似的。", "The mirror is fogged. One patch is clear, as if wiped.")}
+{t("镜子里,池边站着一个人。背对着你们,湿头发到腰,在洗什么东西。", "In the mirror someone stands at the basin. Back to you, wet hair to the waist, washing something.")}
+{t("你回头。池边没有人。", "You look round. There's nobody at the basin.")}
+{t("“いち……に……さん……”", "‘Ichi... ni... san...’")}
+{t("数数。日语的。你们都听得出来,动画片里的数法。", "Counting. Japanese. You all know it, the way cartoons count.")}
+{t("怡贴在门边,嘴唇在动。“……她数到九就从头。第九个之后停得特别久。”他看你一眼,“她少一个。”", "Yi is flat against the door, lips moving. ‘...She goes to nine and starts over. After the ninth she stops a long time.’ He looks at you. ‘She's one short.’")}
+{t("“数盘子的。”你听见自己说。“井里数盘子那个。皿屋敷。”", "‘The plate counter,’ you hear yourself say. ‘The one in the well, counting plates. Sarayashiki.’")}
+{t("志勇:“说人话。”", "Zhiyong: ‘In Chinese.’")}
+{t("“她数够九个,就回头数人。”", "‘When she gets to nine she turns round and counts people.’")}
+~ fear += 15
+~ scare_all(10)
+{t("池子那头,水底下有个人。脸朝下,校服,两只手还在水里搓。304 的小冯。", "At the far end someone is under the water. Face down, in uniform, both hands still rubbing. Xiaofeng, from 304.")}
+{t("志勇:“别碰。”", "Zhiyong: ‘Don't.’")}
+{t("最里面的淋浴隔间,门反锁着。里面有人一直在念:“两个。两个。两个。”", "The last shower stall is bolted from inside. Someone in there keeps saying: ‘Two. Two. Two.’")}
+{t("大头。304 的另一个。", "Datou. The other one from 304.")}
+~ datou = "stall"
+~ okiku = 1
+{t("“ご。”", "‘Go.’")}
+{t("镜子里的人往隔间那头挪了一步。手上的东西还在洗。", "The one in the mirror takes a step towards the stall. Still washing what's in her hands.")}
+{insight >= 4: {t("她每数一个走一步。到九,她就到隔间门口了。", "One step a number. At nine she's at the stall door.")} #voice:insight}
+{charm >= 4: {t("大头要有人叫才出得来。", "Datou won't come out unless someone calls him.")} #voice:charm}
+-> rescue
+
+// The rescue: she counts up from five, a step a number; at nine she takes whoever is in the stall.
+=== rescue ===
+~ count = 5
+~ datou_out = false
+~ held = false
+-> rescue_round
+
+=== rescue_round ===
+{ count >= 9 and not datou_out: -> rescue_lost }
+{ count >= 9: -> rescue_counted }
+{
+    - count == 5:
+        {t("她在第一个龙头。", "She's at the first tap.")}
+    - count == 6:
+        {t("“ろく。”第二个龙头。", "‘Roku.’ The second tap.")}
+    - count == 7:
+        {t("“しち。”她的手里是一件校服,拧着水。", "‘Shichi.’ What she's wringing out is a uniform.")}
+    - count == 8:
+        {t("“はち。”她的手搭在隔间门上了。门里面的声音停了。", "‘Hachi.’ Her hand is on the stall door. The voice inside has stopped.")}
+        {t("播州那个版本。和尚替她数了第十个,她就走了。你看过。你记得。", "The Banshu version. A monk counted the tenth for her and she left. You've seen it. You remember.")} #voice:reason
+}
+{ datou_out:
+    {t("大头在你身后,攥着你的衣服。", "Datou is behind you, holding on to your shirt.")}
+}
++ {not datou_out} [{t("拽开隔间门", "Wrench the stall door open")} #check:strength:normal]
+    { check("strength", 10) >= 3:
+        {t("锁舌崩了。大头缩在最里面,你把他拖出来。他的脚是湿的。", "The bolt gives. Datou is curled at the back; you drag him out. His feet are wet.")}
+        ~ datou_out = true
+    - else:
+        {t("门卡死了。门边的铁皮划开你的手。", "The door won't give. The metal edge opens your hand.")}
+        ~ hp -= 1
+    }
+    -> rescue_after
++ {not datou_out} [{t("隔着门劝大头", "Talk Datou out through the door")} #check:charm:normal]
+    { check("charm", 10) >= 3:
+        {t("“大头。是我,302 的。你开门,我们带你走。”", "‘Datou. It's me, from 302. Open up, we're taking you out.’")}
+        {t("里面安静了一下。锁开了。", "Quiet inside. Then the lock.")}
+        ~ datou_out = true
+    - else:
+        {t("“大头——”“两个!两个!”他往里缩。", "‘Datou—’ ‘Two! Two!’ He shrinks further in.")}
+        ~ fear += 5
+    }
+    -> rescue_after
++ [{t("挡在池子和隔间中间", "Get between the basin and the stall")} #check:stamina:easy]
+    { check("stamina", 8) >= 3:
+        {t("你站过去。镜子里她停了。数数的声音停在半截。", "You step across. In the mirror she stops. The count stops halfway through.")}
+        {t("她的手冰的。你没回头看是什么碰了你。", "Her hand is cold. You don't look round at what touched you.")}
+        ~ held = true
+        ~ fear += 5
+    - else:
+        {t("湿的手摸到你的脚踝。你跳开了。", "A wet hand on your ankle. You jump clear.")}
+        ~ hp -= 1
+        ~ fear += 10
+    }
+    -> rescue_after
++ {not okiku_known} [{t("看她在数什么", "See what she's counting")} #check:insight:normal]
+    { check("insight", 10) >= 3:
+        {t("她数的不是人。是水里的东西。八件校服,一件一件数过去。", "It isn't people she counts. It's what's in the water. Eight uniforms, one by one.")}
+        {t("八件。她要九件。", "Eight. She wants nine.")} #voice:insight
+        ~ okiku_known = true
+    - else:
+        {t("你盯着镜子看。她回了一下头。那张脸上没有东西。", "You stare into the mirror. She turns her head a little. There's nothing on the face.")}
+        ~ fear += 15
+    }
+    -> rescue_after
++ {not clue_number} [{t("捞池子里那件旧款校服", "Fish out the old-style uniform")}]
+    {t("八件里有一件不一样。旧款的,学校十几年前换过。领口内侧用圆珠笔写着学号。", "One of the eight is different. The old cut; the school changed it over ten years ago. Inside the collar, a student number in ballpoint.")}
+    {t("怡看了一眼。“记住了。”他就是记得住。", "Yi glances at it. ‘Got it.’ He just does.")}
+    ~ clue_number = true
+    {t("水是温的。", "The water is warm.")}
+    ~ fear += 5
+    -> rescue_after
++ {count == 8} [{t("喊:十", "Shout: ten")} #check:reason:normal]
+    { check("reason", 10) >= 3:
+        {t("“きゅう。”", "‘Kyuu.’")}
+        {t("“十!”你喊。声音劈了。", "‘Ten!’ you shout. Your voice cracks.")}
+        {t("她停了。镜子里的人直起身。", "She stops. The one in the mirror straightens up.")}
+        {t("然后哭了一声。很短,像松了口气。", "Then one sob. Short, like a breath let go.")}
+        {t("水面晃了一下。她顺着排水口下去了。水跟着她走,一直退到池底。", "The water shivers. She goes down the drain. The water goes with her, all the way to the bottom of the basin.")}
+        ~ okiku = 2
+        ~ fear = clamp(fear - 10, 0, 100)
+        -> rescue_won
+    - else:
+        {t("“十——”你喊早了。她还在“はち”上。", "‘Ten—’ Too early. She's still on ‘hachi’.")}
+        {t("镜子里的人回过头来。数到了你。“きゅう。”", "The one in the mirror turns round. Counts you. ‘Kyuu.’")} #fx:pulse
+        ~ hp = clamp(hp - 2, 0, 10)
+        ~ fear += 20
+        -> rescue_counted
+    }
++ {datou_out} [{t("拉着大头冲出门", "Run for the door with Datou")} #check:stamina:normal]
+    { check("stamina", 10) >= 3:
+        {t("你们跑。大头的鞋在地上打滑,志勇一把把他拎起来。", "You run. Datou's shoes skid; Zhiyong hauls him up by the collar.")}
+        -> rescue_won
+    - else:
+        {t("大头摔了。你回去拽他,膝盖磕在池沿上。", "Datou goes down. You go back for him and your knee hits the rim.")}
+        ~ hp -= 1
+        -> rescue_after
+    }
++ [{t("回 302", "Back to 302")}]
+    { datou_out:
+        {t("你们退出去。大头跟着。", "You back out. Datou comes.")}
+        -> rescue_won
+    }
+    {t("你们退出去。隔间里的声音还在念:“两个。两个。”", "You back out. The voice in the stall is still going: ‘Two. Two.’")}
+    {t("志勇在门口站了一秒。“操。”他跟上来了。", "Zhiyong stops in the doorway for a second. ‘Fuck.’ Then he follows.")}
+    ~ datou = "dead"
+    ~ fear += 20
+    ~ scare_all(15)
+    ~ trust(zhiyong, -10)
+    -> hub
+
+=== rescue_after ===
+{ held:
+    ~ held = false
+- else:
+    ~ count += 1
+}
+-> rescue_round
+
+// At nine with someone still in the stall.
+=== rescue_lost ===
+{t("“きゅう。”", "‘Kyuu.’")}
+{t("隔间的门自己开了。", "The stall door opens by itself.")} #fx:shake
+{t("里面没有人。", "There's nobody inside.")}
+{t("池子那头,水底下现在是两个人。并排。两只手都在搓。", "At the far end, under the water, there are two now. Side by side. All four hands rubbing.")}
+{t("她不数了。她在洗。", "She isn't counting any more. She's washing.")}
+~ datou = "dead"
+~ fear += 25
+~ scare_all(20)
+{t("志勇一句话没说,把你推出门。", "Zhiyong doesn't say a word; he shoves you out of the door.")}
+{reason >= 3: {t("怡的故事。去关龙头的人,后面怎么了。现在知道了。", "Yi's story. The one who went to turn off the tap. Now you know the rest.")} #voice:reason}
+-> hub
+
+// She counted you: out, with whoever is out.
+=== rescue_counted ===
+{t("腿不听使唤。志勇拖你,烟波拖{datou_out:大头|怡}。门。", "Your legs won't work. Zhiyong drags you, Yanbo drags {datou_out:Datou|Yi}. The door.")}
+{ not datou_out:
+    {t("隔间里的声音停了。", "The voice in the stall has stopped.")}
+    ~ datou = "dead"
+    ~ fear += 10
+}
+{ datou_out: -> rescue_won }
+-> hub
+
+=== rescue_won ===
+{t("走廊里。大头靠着墙,喘。", "The corridor. Datou against the wall, panting.")}
+{t("“小冯去关龙头。”他说,“门外说不对的时候,龙头就响了。他说他去关。”", "‘Xiaofeng went to turn the tap off,’ he says. ‘When the voice outside said wrong, the tap started. He said he'd go.’")}
+{t("“什么门外?”", "‘What voice outside?’")}
+{t("“敲门的。问几个人。我们说两个。”他看你,“穿拖鞋的。我以为是阿姨。”", "‘The knock. Asking how many. We said two.’ He looks at you. ‘Slippers. I thought it was the warden.’")}
+{t("“跟我们回 302。”", "‘Come back to 302 with us.’")}
+{t("他摇头。摇得很用力。“那屋就是它数的屋。”", "He shakes his head, hard. ‘That's the room it counts.’")}
+{t("他往楼梯间跑了。拖鞋拍在地上的声音,一直到楼梯口才停。", "He runs for the stairwell. The slap of his slippers on the floor doesn't stop until the stair door.")}
+~ datou = "stairs"
+~ trust(zhiyong, 5)
+{ okiku == 2:
+    {t("水房里安静了。水退干净了。", "The water room is quiet. The water has drained away.")}
+}
+{insight >= 4: {t("两个人答两个,门外说不对。它数的不是屋里的人。", "Two said two, and the voice outside said wrong. It isn't the people in the room it counts.")} #voice:insight}
++ [{t("回 302", "Back to 302")}]
+    -> hub
+
+// Later visits.
+=== water_again ===
+{
+    - okiku == 2:
+        {t("水房。水退了,校服瘫在池底。小冯还在,脸朝下。没有人数数。", "The water room. Drained; the uniforms lie slumped on the bottom. Xiaofeng is still there, face down. Nobody is counting.")}
+        { not clue_number:
+            {t("八件里有一件旧款的。领口内侧写着学号。怡看了一眼,记住了。", "One of the eight is the old cut. A student number inside the collar. Yi looks once and has it.")}
+            ~ clue_number = true
+        }
+    - else:
+        {t("水房。她还在镜子里,还在数。", "The water room. She's still in the mirror, still counting.")}
+        { datou == "dead":
+            {t("池子那头是两个人。", "Two at the far end.")}
+        }
+        {t("“ご……ろく……”她回了一下头。", "‘Go... roku...’ She turns her head a little.")}
+        ~ fear += 10
+}
++ {okiku == 1} [{t("等她数到九,喊:十", "Wait for nine and shout: ten")} #check:reason:normal]
+    { check("reason", 10) >= 3:
+        {t("“きゅう。”“十!”", "‘Kyuu.’ ‘Ten!’")}
+        {t("她哭了一声,顺着排水口下去了。水跟着退了。", "One sob, and she goes down the drain. The water follows.")}
+        ~ okiku = 2
+        ~ fear = clamp(fear - 10, 0, 100)
+    - else:
+        {t("喊早了。她数到了你。", "Too early. She counts you.")} #fx:pulse
+        ~ hp -= 1
+        ~ fear += 15
+    }
+    -> water_again
 + [{t("回 302", "Back to 302")}]
     -> hub
 
@@ -431,11 +696,101 @@ VAR went_303 = false
     -> hub
 
 === office ===
+{ went_office: -> office_again }
 ~ went_office = true
-{t("值班室。没人。茶杯是热的。", "The warden's office. Nobody. The tea is still warm.")}
-{t("(值班室下一稿写。)", "(The office is written in the next draft.)")}
+{t("往上一层。楼梯间的门推开,是一楼大厅。", "One flight up. The stair door opens on the ground-floor lobby.")}
+{t("玻璃大门锁着。外面是黑的。不是夜里那种黑,是什么都没有。", "The glass doors are locked. Outside is black. Not night-black; nothing-black.")}
+{t("值班室的灯亮着,小电视开着。茶杯是热的。桌子底下一双拖鞋,摆得整整齐齐。人没了。", "The office light is on, the little TV on. The tea is hot. A pair of slippers under the desk, side by side. Nobody.")}
+{t("电视放的是监控。三楼走廊。八扇门。", "The TV is the camera feed. Third-floor corridor. Eight doors.")}
+{t("302 的门开着一条缝。", "302's door stands open a crack.")}
+{t("志勇:“……我锁的。”", "Zhiyong: ‘...I locked it.’")}
+~ fear += 10
+{t("值班记录本摊在桌上。最后一行:8:59,上楼。", "The duty log lies open. Last line: 8:59, went up.")}
+{t("阿姨从来不上楼。就这一回。", "She never goes up. Just this once.")}
+{t("她的拖鞋在桌子底下。那楼上穿拖鞋走的是谁。", "Her slippers are under the desk. So whose slippers are those upstairs.")}
+~ aunt_clue = true
+~ fear += 5
+{t("钥匙柜开着。303 那个钩子是空的,牌子还挂着。", "The key cabinet is open. The hook for 303 is empty; the tag still hangs there.")}
+{t("窗户对着宿舍楼。整栋楼黑的。", "The window faces the dorm block. The whole building is dark.")}
+{
+    - light == "on":
+        {t("只有三楼一扇窗亮着。302。窗边站着一个人,往下看。", "One window lit on the third floor. 302. Someone stands at it, looking down.")}
+        ~ fear += 10
+    - light == "torch":
+        {t("三楼有一扇窗里有光在晃。302。你的手机在你手里。", "In one third-floor window a light is moving. 302. Your phone is in your hand.")}
+        ~ fear += 10
+    - else:
+        {t("302 的窗是黑的。可门缝底下那条光,从楼外都看得见。", "302's window is dark. But the strip of light under the door shows even from out here.")}
+        ~ fear += 5
+}
+{t("桌上还有一本。来访登记。", "One more book on the desk. The visitors' register.")}
+-> office_choices
+
+=== office_choices ===
++ {not ledger_seen} [{t("翻来访登记", "Open the visitors' register")}]
+    -> office_ledger
++ {ledger_seen and not (inv ? ledger)} [{t("把登记本带走", "Take the register")}]
+    ~ inv += ledger
+    ~ noticed = true
+    {t("你把本子夹在腋下。", "You tuck the book under your arm.")}
+    {t("大厅的灯灭了一盏。又一盏。从大门那头灭过来。", "A lobby light goes out. Another. From the doors inward.")} #fx:dark
+    {t("烟波:“它知道了。走。”", "Yanbo: ‘It knows. Go.’")}
+    ~ fear += 10
+    -> office_choices
++ {ledger_seen and erased == "yi" and not yi_written} [{t("把怡的名字写回去", "Write Yi's name back in")}]
+    {t("桌上有笔。你在划掉的名字旁边重新写了一遍。怡。", "There's a pen on the desk. Beside the crossed-out name you write it again. Yi.")}
+    {t("笔尖划过去的时候,电视里的走廊闪了一下。", "As the pen moves, the corridor on the TV flickers.")}
+    {t("怡站在你旁边,没说话。手在抖。", "Yi stands beside you and says nothing. His hands are shaking.")}
+    ~ yi_written = true
+    ~ noticed = true
+    ~ trust(yi, 15)
+    ~ scare(yi, -20)
+    -> office_choices
 + [{t("回 302", "Back to 302")}]
     -> hub
+
+=== office_ledger ===
+~ ledger_seen = true
+{t("今晚那页。302 那行:志勇,18:25。怡,18:40。", "Tonight's page. The 302 line: Zhiyong, 18:25. Yi, 18:40.")}
+{ hidden == "yi":
+    {t("没有怡。只有志勇。", "No Yi. Just Zhiyong.")}
+    {t("怡看了很久。“我记得我签的。”", "Yi looks a long time. ‘I remember signing.’")}
+    ~ scare(yi, 10)
+}
+{ erased == "yi":
+    {t("怡的名字上划了一道。签退那栏写着 8:59。不是他的字。", "A line through Yi's name. The sign-out column says 8:59. Not his writing.")}
+    ~ scare(yi, 15)
+}
+{ fifth:
+    {t("下面还有一个名字。阿泽。墨水是新的,字却很老,像十几年前的人写的。", "One more name below. Aze. The ink is fresh, the hand old, like someone writing ten years ago.")}
+    {t("阿泽站在门口,没进来。", "Aze stands in the doorway and doesn't come in.")}
+- else:
+    {t("下面还有一个名字。墨水是褐色的,字很旧。入楼 6:30。签退一栏空着。", "One more name below. Brown ink, old writing. In at 6:30. Sign-out blank.")}
+}
+~ fear += 10
+{t("你往前翻。", "You turn back.")}
+{t("本子厚得不对。翻多少页都翻不到底,每一晚,302 那行都有同一个名字。都划掉了。", "The book is thicker than it should be. Page after page, no end to it, and every night the same name on the 302 line. Every one crossed out.")}
+{t("最早那一页。日期是十几年前。名字。房间:303。签退那栏一条红线,旁边两个字:退宿。", "The first page. A date over ten years back. The name. Room: 303. A red line through the sign-out column, and two words beside it: moved out.")}
+~ aze_known = true
+{ clue_number:
+    {t("学号也在。怡念出来,和池子里那件校服领口上的一个数不差。", "The student number is there too. Yi reads it out: the same as inside the collar of the uniform in the basin, to the digit.")}
+    {t("阿泽。303。串门到 302,没出去。", "Aze. 303. Came visiting 302 and never left.")}
+- else:
+    {t("名字旁边有学号。怡记下了。", "A student number beside the name. Yi has it.")}
+}
+{reason >= 3: {t("它数的是这一行。这一行一直是五个。", "What it counts is this line. This line has always said five.")} #voice:reason}
+{charm >= 4: {t("签退一栏是空的。替他签了,数就对了。", "The sign-out column is blank. Sign him out, and the number comes right.")} #voice:charm}
+~ fear += 10
+-> office_choices
+
+=== office_again ===
+{t("值班室。茶凉了。拖鞋还在。", "The office. The tea has gone cold. The slippers are still there.")}
+{ inv ? ledger:
+    {t("桌上少了一本。大厅的灯没再亮过。", "One book fewer on the desk. The lobby lights never came back.")}
+}
+{t("电视里,302 的门{marked:开着|开着一条缝}。", "On the TV, 302's door is {marked:open|open a crack}.")}
+~ fear += 5
+-> office_choices
 
 === room303 ===
 ~ went_303 = true
