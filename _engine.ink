@@ -109,3 +109,13 @@ EXTERNAL check(skill, difficulty)
     ~ return 3
 }
 ~ return 1
+
+// Dice outside a check: {roll("2d6+3")} → the total.
+EXTERNAL roll_dice(formula, label)
+
+=== function roll(formula) ===
+~ return roll_dice(formula, "")
+
+// Without the engine the dice are flat: each table's average, 1 for anything else.
+=== function roll_dice(formula, label) ===
+~ return 1
