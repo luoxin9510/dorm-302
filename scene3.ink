@@ -18,6 +18,9 @@ VAR went_stairs = false
 VAR went_office = false
 VAR went_303 = false
 VAR noticed = false        // the building took note of you (the visitors' book moved, a name written back)
+VAR heater_seen = false    // the water heater by the stairs, still running after its power-off hour
+VAR zy_album = false       // saw that Zhiyong photographs everything he says he isn't looking at
+VAR zy_broke = 0           // Zhiyong's shell: 0 whole / 1 broke on the stairs / 2 Yanbo has said "行了" for him
 
 // The water room: Okiku at the basin, counting; the two from 304.
 VAR datou = ""             // 大头 (304): "" not met / stall (hiding) / stairs (ran for the stairs) / dead
@@ -154,6 +157,11 @@ VAR yi_written = false     // wrote Yi's name back into the book (erased branch)
     ~ fear = clamp(fear - 10, 0, 100)
     ~ hp = clamp(hp + 1, 0, 10)
 }
+{ zy_broke == 1:
+    {t("烟波看了志勇一眼。“行了。”", "Yanbo looks at Zhiyong. ‘Right.’")}
+    {t("志勇没接。", "Zhiyong doesn't answer.")}
+    ~ zy_broke = 2
+}
 { marked and back >= 3:
     {t("没人敢喘大气。它知道这间屋。", "Nobody breathes out. It knows this room.")}
 }
@@ -237,6 +245,9 @@ VAR yi_written = false     // wrote Yi's name back into the book (erased branch)
 { it_gone == 0 and not (marked or noticed) and back % 3 == 0:
     -> ambush(dest)
 }
+{ not heater_seen and dawn <= 6 and battery > 0:
+    -> heater(dest)
+}
 -> arrive(dest)
 
 === first_contact(dest) ===
@@ -274,6 +285,48 @@ VAR yi_written = false     // wrote Yi's name back into the book (erased branch)
     -> arrive(dest)
 + [{t("回 302", "Back to 302")}]
     -> hub
+
+// A quiet trip after half past ten: the water heater by the stairs is still running. Once.
+=== heater(dest) ===
+~ heater_seen = true
+{t("楼梯口的开水器上贴着一张通知,A4,四个角都用透明胶贴着。", "A notice on the water heater by the stairs, A4, all four corners taped down.")}
+{t("关于开水器夜间断电的通知", "NOTICE: NIGHT-TIME POWER-OFF OF THE WATER HEATER")}
+{t("各宿舍:本开水器每晚 22:30 断电。", "To all rooms: this heater is switched off every night at 22:30.")}
+{t("宿管办　　　　年 11 月　　日", "Dormitory Office　　November ___, ____")}
+{t("年份和日子那两格被水汽泡开了,只看得出“11 月”。", "The year and the day have swollen with steam. Only ‘November’ is left.")}
+{t("怡在你后面念通知上的字,念到年份那格停了。", "Yi reads it out behind you, and stops at the year.")}
+{t("开水器的指示灯亮着。里面在响。", "The heater's light is on. Something inside it is running.")}
+{t("烟波:“几点。”", "Yanbo: ‘Time.’")}
+{t("志勇看手机。“{clock()}。{dawn * 3}%。”", "Zhiyong looks at his phone. ‘{clock()}. {dawn * 3}%.’")}
+{t("“断电是十点半。”", "‘It goes off at half ten.’")}
+{t("志勇搓了一下后脖子,又搓一下。“操。傻屌机器。”他走过去按开关,按不动,本来就是按死的。“寄。按死的。按死的还响,寄了。”", "Zhiyong rubs the back of his neck, then again. ‘Fuck. Stupid bastard machine.’ He goes over and pushes the switch. It doesn't move; it was jammed off already. ‘Cooked. It's jammed off. Jammed off and still running. Cooked.’")}
+{t("他退回来的时候举了一下手机。闪光灯没开,咔的一声。", "On his way back he lifts the phone. No flash. A click.")}
+{t("烟波又去看那张通知,看了很久。“十点半。”", "Yanbo goes back to the notice and looks at it a long time. ‘Half ten.’")}
+{t("“你刚说过了。”", "‘You said that.’")}
+{t("“十点半。”", "‘Half ten.’")}
+{t("咕嘟。", "Glug.")}
+{t("烟波没说话,抬手往开水器底下指了一下。志勇没问指的是什么,人已经挪过去了,挡在烟波前面,比烟波高半个头。他的腿在抖,左边那条。", "Yanbo says nothing and points under the heater. Zhiyong doesn't ask at what; he's already moved, in front of Yanbo, half a head taller. His leg is shaking. The left one.")}
+{t("咔。又一张。咔。", "Click. Another. Click.")}
+{t("“你拍什么呢。”", "‘What are you photographing.’")}
+{t("“没拍。”", "‘Nothing.’")}
+{t("开水器底下的地上,一圈湿的,一直连到他鞋边。", "On the floor under the heater, a ring of wet, reaching all the way to his shoe.")}
+~ fear += 5
+~ scare(zhiyong, 10)
+* [{t("手机照开水器底下", "Point the phone under the heater")}]
+    {t("光圈落下去,那圈湿的边上有一圈白的,又多了一点。志勇往前迈了半步,又退回来。“……先存个档。”说完他自己愣了一下。“没事。走。”", "The light goes down. Round the edge of the wet there's a ring of white, and it's a little wider than it was. Zhiyong takes half a step forward and comes back. ‘...Save first.’ He hears himself. ‘Nothing. Go.’")}
+    ~ fear += 5
+    ~ scare(zhiyong, 5)
+    -> arrive(dest)
+* [{t("手机照志勇的手", "Point the phone at Zhiyong's hand")}]
+    {t("他攥手机的那只手青筋鼓着,屏幕亮着,相册开着,最近一张的缩略图是那张通知。他发现你在照他,把手机塞进兜里。“照路。”", "The hand round his phone has its veins up. The screen's on: the photo album, and the newest thumbnail is the notice. He sees you looking and shoves the phone in his pocket. ‘Light the floor.’")}
+    ~ zy_album = true
+    ~ trust(zhiyong, -5)
+    -> arrive(dest)
+* [{t("关掉手机的灯", "Turn the phone's light off")}]
+    {t("黑了一秒,志勇的手就抓上了你手腕,劲很大,是擒拿那个位置。他没说话。你又打开灯,他松了手,在裤子上擦了擦。", "One second of dark and Zhiyong's hand is on your wrist, hard, right where the hold goes. He says nothing. You put the light back on. He lets go and wipes his hand on his trousers.")} #fx:dark
+    ~ scare(zhiyong, 10)
+    ~ trust(zhiyong, 5)
+    -> arrive(dest)
 
 // --- fights ------------------------------------------------------------
 
@@ -691,9 +744,59 @@ VAR yi_written = false     // wrote Yi's name back into the book (erased branch)
 ~ went_stairs = true
 {t("楼梯间。往下走,下到底,推开门,还是三楼。", "The stairwell. Down, all the way, push the door: the third floor.")}
 {t("往上走一层,是一楼大厅。值班室的灯亮着。", "Up one flight is the ground-floor lobby. The light is on in the warden's office.")}
+{ fear_zhiyong >= 70 and zy_broke == 0: -> stairs_break }
+-> stairs_tail
+
+=== stairs_tail ===
 {t("(楼梯间下一稿写。)", "(The stairwell is written in the next draft.)")}
 + [{t("回 302", "Back to 302")}]
     -> hub
+
+// Zhiyong's shell breaks: his 90 on the sheet, 70 on the dial. Once. Yanbo says "行了" for him at the next hub.
+=== stairs_break ===
+~ zy_broke = 1
+{t("志勇的手机屏幕亮了一下。", "Zhiyong's phone lights up.")}
+{t("3%。", "3%.")}
+{t("他没扣回去。", "He doesn't turn it over.")}
+{t("2%。", "2%.")}
+{t("他点开了一个聊天。", "He opens a chat.")}
+{t("昕　20:41", "Xin　20:41")}
+{t("来不来", "coming or not")}
+{t("　　　　　　来", "　　　　　　coming")}
+{t("1%。", "1%.")}
+{t("黑了。", "Black.")} #fx:dark
+{t("包掉在他脚边。", "The bag drops at his feet.")}
+{t("你的手机照着台阶。往上,是黑的。", "Your phone lights the steps. Above that it's dark.")}
+{t("没人骂人。", "Nobody swears.")}
+{t("你等那句“啧”。", "You wait for the ‘tch’.")}
+{t("没有。", "It doesn't come.")}
+{t("他站着,就在你右边。你知道那是他,头顶那团黑比别处高。", "He's standing right there on your right. You know it's him: the dark over his head is taller than the dark everywhere else.")}
+{ inv ? bank:
+    {t("怡在你后面小声说:“充电宝……在昕那儿。”", "Behind you Yi says, quietly: ‘The power bank... Xin has it.’")}
+- else:
+    {t("怡在你后面把充电宝从兜里掏出来,线缠着。", "Behind you Yi gets the power bank out of his pocket, cable tangled.")}
+}
+{t("你伸手,摸到他胳膊。硬的。不动。", "You reach out and find his arm. Rigid. Not moving.")}
+{t("然后有只手攥住了你的袖子。", "Then a hand closes on your sleeve.")}
+{t("很大的一只手。", "A very big hand.")}
+{t("“……昕。”", "‘...Xin.’")}
+{t("“在。”", "‘Here.’")}
+{t("“我腿。”", "‘My legs.’")}
+* [{t("让他攥着,往后退一步", "Let him hold on, and take a step back")}]
+    {t("他跟着退了一步。又一步。到了平台上,他的手还在你袖子上。", "He comes with you, a step. Another. On the landing his hand is still on your sleeve.")}
+    ~ scare(zhiyong, -15)
+    ~ trust(zhiyong, 5)
+* [{t("把自己的手机塞进他手里", "Push your own phone into his hand")}]
+    {t("他攥住了。没开灯,就攥着。屏幕朝下,和他平时一样。过了一会儿他把它翻过来,看了一眼电量,又扣回去。走的时候他把手机还你了,没说话。", "He takes it. Doesn't turn the light on, just holds it. Face down, the way he always does. After a while he turns it over, reads the charge, turns it back. When you move off he hands it back, without a word.")}
+    ~ scare(zhiyong, -20)
+    ~ trust(zhiyong, 10)
+    ~ fear += 5
+* [{t("停下来,等他自己走", "Stop, and wait for him to move")}]
+    {t("你们站着。烟波没催。怡在数台阶,很小声。过了很久,志勇的手松开了,他先走的。走得很慢。", "You stand there. Yanbo doesn't hurry him. Yi is counting the steps, very quietly. After a long time Zhiyong's hand lets go, and he goes first. Slowly.")}
+    ~ scare(zhiyong, -5)
+    ~ fear += 5
+- {t("扶手上粘着一块口香糖,干了。你们从旁边走过去。", "There's a piece of chewing gum stuck to the handrail, dried out. You walk past it.")}
+-> stairs_tail
 
 === office ===
 { went_office: -> office_again }

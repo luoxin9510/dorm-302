@@ -156,20 +156,39 @@ VAR shone = 0            // things the torch was pointed at
 {t("“《第七扇门》,九八年的,VHS 转的,我看过八遍了,不吓人。”", "‘The Seventh Door. Ninety-eight. Ripped off a VHS. I've seen it eight times, it's not scary.’")}
 {t("“你看过八遍你看,我不看。”", "‘You've seen it eight times, you watch it. I'm not.’")}
 {t("“你一米九你怕什么。”", "‘You're one ninety. What are you scared of.’")}
-{t("“一米九跟这有什么关系。”他把椅子转过去,背对屏幕。过了一分钟,又转回来一半。", "‘What's one ninety got to do with it.’ He turns the chair round, back to the screen. A minute later it's turned halfway back.")}
+{t("“一米九跟这有什么关系。”他把椅子转过去,反骑着,下巴搁在椅背上,背对屏幕。包在他两脚中间,包带在脚脖子上绕了一圈。", "‘What's one ninety got to do with it.’ He turns the chair round and sits on it backwards, chin on the backrest, back to the screen. The bag is between his feet, the strap wound once round his ankle.")}
+{t("“你转过来啊。”", "‘Turn round, then.’")}
+{t("“不看。”", "‘Not watching.’")}
+{t("“那你坐这儿干嘛。”", "‘Then what are you sitting here for.’")}
+{t("“你屋暖和。”", "‘Your room's warm.’")}
+{t("烟波:“不暖和。”", "Yanbo: ‘It isn't.’")}
 {t("片子开始了。画面右下角有一串跳动的时间码,画质糊得像隔着水,颜色偏绿。一个穿校服的女生半夜走在学校的走廊上,一边走一边数门。她穿拖鞋,啪嗒,啪嗒。", "The film starts. A timecode ticks in the bottom corner, the picture smeared like it's underwater, everything tinted green. A girl in school uniform walks down a school corridor at night, counting doors as she goes. She's wearing slippers. Slap. Slap.")}
 {t("“导演就拍了这一部。”你说,“后来人没了。”", "‘The director only ever made this one,’ you say. ‘Then he disappeared.’")}
 {t("志勇:“你能不能别说话。”", "Zhiyong: ‘Can you not.’")}
+{t("他把手机翻过来看了一眼,又扣回去。", "He turns his phone over, looks, turns it face down again.")}
+{t("椅子转回来一点。", "The chair comes round a little.")}
+{t("又一点。", "A little more.")}
 {t("烟波:“这镜头是故意的,一直不给她的脸。”", "Yanbo: ‘The shot's deliberate. It never gives you her face.’")}
+{t("“……她别进最里面那扇。”", "‘...She'd better not go in the last one.’")}
+{t("“你不是不看吗?”你说。", "‘Thought you weren't watching,’ you say.")}
+{t("“我听的。”", "‘I'm listening.’")}
 {t("怡:“……等等。她为什么要数门?”", "Yi: ‘...Wait. Why is she counting doors?’")}
-{t("“你看就完了。”", "‘Just watch.’")}
+{t("“这种图,数门都是——”志勇停了。“啧。看你们的。”", "‘On this kind of map, counting doors always means—’ Zhiyong stops. ‘Tch. Watch your film.’")}
 {t("“不是,我是说从逻辑上——”", "‘No, I mean logically—’")}
 {t("“怡。看就完了。”", "‘Yi. Just watch.’")}
 {t("片子里的走廊尽头有一个绿色的安全出口灯。窗户外面是黑的,什么都没有。", "At the end of the corridor in the film there's a green exit light. The windows are black. Nothing outside them.")}
 {t("楼下阿姨的电视换台了,新闻联播的开头曲从楼板底下钻上来。七点了。", "Downstairs the warden changes channel. The evening news theme comes up through the floor. Seven o'clock.")}
-{t("志勇从椅背上面看了一眼。“这走廊——”没说完。", "Zhiyong looks over the back of the chair. ‘That corridor—’ He doesn't finish.")}
-{t("“这走廊怎么了?”", "‘What about the corridor?’")}
-{t("“没事。”", "‘Nothing.’")}
+{t("画面切黑,切了三秒。屏幕里能看见你们后面一排的脸。最上面那张高出一截,眼睛睁着。", "The picture cuts to black for three seconds. In the screen you can see the row of faces behind you. The top one sits a head higher than the rest, eyes open.")}
+{t("“我看门。”志勇说,“你想啥呢。”", "‘I'm watching the door,’ Zhiyong says. ‘What are you on about.’")}
+{t("女生又在走了。一扇门,又一扇。", "The girl is walking again. One door, then another.")}
+{t("“这学校拍的吧。”志勇说,“走廊跟咱这层一模一样。傻屌导演,景都不换。”", "‘They shot this here,’ Zhiyong says. ‘That corridor's exactly like our floor. Lazy bastard of a director, couldn't even change the set.’")}
+{t("没人笑。", "Nobody laughs.")}
+{t("烟波看着屏幕:“是一模一样。”", "Yanbo, eyes on the screen: ‘It is exactly like it.’")}
+{t("“……我开玩笑的。”", "‘...I was joking.’")}
+{t("“我没开。”", "‘I wasn't.’")}
+{t("志勇把椅子整个转了过来。“我看看哪儿一样。”", "Zhiyong turns the chair the whole way round. ‘Show me where it's the same.’")}
+{t("他看得比谁都近。", "He watches closer than anyone.")}
+{insight >= 4: {t("他脚脖子上那圈包带,勒紧了。", "The strap round his ankle has pulled tight.")} #voice:insight}
 {t("女生数到第七扇门,停下了。镜头终于转过来,要给她的脸——", "The girl gets to the seventh door and stops. The camera finally starts to come round, to give you her face—")}
 {t("画面定住了。笔记本的电池灯闪了两下,黑了。", "The picture freezes. The laptop's battery light blinks twice and goes out.")} #fx:dark
 {t("“卧槽。”你说。", "‘Oh, come on,’ you say.")}
