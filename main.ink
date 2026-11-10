@@ -33,14 +33,7 @@ VAR shone = 0            // things the torch was pointed at
 
 // --- helpers -------------------------------------------------------------
 
-=== function clamp(x, lo, hi) ===
-{ x < lo:
-    ~ return lo
-}
-{ x > hi:
-    ~ return hi
-}
-~ return x
+// clamp(x, lo, hi) comes from the rule pack (packs/narrative-check/rules.ink).
 
 // Frighten a companion (negative d calms him).
 === function scare(c, d) ===
