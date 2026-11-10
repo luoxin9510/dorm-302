@@ -1,21 +1,8 @@
 ---
-rules: { kind: sum, dice: [6, 6] }
-languages: [zh, en]
-difficulties: { trivial: 6, easy: 8, normal: 10, hard: 12, severe: 14, legendary: 16 }
-skills:
-  - { id: reason, name: { zh: 理智, en: Reason }, voice: { stance: { zh: "这说得通,撑住。", en: "It adds up. Hold on." }, color: "#7a9cff" } }
-  - { id: stamina, name: { zh: 耐力, en: Stamina }, voice: { stance: { zh: 再坚持一下。, en: "Just a little longer." }, color: "#8fbf6a" } }
-  - { id: charm, name: { zh: 魅力, en: Charm }, voice: { stance: { zh: 这事能谈。, en: "We can talk about this." }, color: "#e6a23c" } }
-  - { id: insight, name: { zh: 洞察力, en: Insight }, voice: { stance: { zh: 注意到了吗。, en: "Did you notice?" }, color: "#b07cd8" } }
-  - { id: strength, name: { zh: 力量, en: Strength }, voice: { stance: { zh: 砸。, en: "Smash it." }, color: "#e26a6a" } }
+system: { path: packs/narrative-check, version: 1 }
 resources:
-  - { id: fear, name: { zh: 恐惧, en: Fear }, min: 0, max: 100, initial: 0 }
-  - { id: hp, name: { zh: 体力, en: Stamina }, min: 0, max: 10, initial: 10 }
   - { id: battery, name: { zh: 电量, en: Battery }, min: 0, max: 100, initial: 80 }
   - { id: dawn, name: { zh: 天亮前, en: Till dawn }, min: 0, max: 8, initial: 8 }
-companionResources:
-  - { id: fear, name: { zh: 恐惧, en: Fear }, min: 0, max: 100, initial: 20 }
-  - { id: trust, name: { zh: 信任, en: Trust }, min: 0, max: 100, initial: 50 }
 characters:
   - { id: xin, name: { zh: 昕, en: Xin }, skills: { reason: 3, stamina: 3, charm: 5, insight: 4, strength: 2 }, companion: { fear: 30, trust: 60 }, items: [phone] }
   - { id: yanbo, playable: false, name: { zh: 烟波, en: Yanbo }, skills: { reason: 5, stamina: 2, charm: 3, insight: 3, strength: 5 }, companion: { fear: 15, trust: 60 } }
@@ -32,13 +19,11 @@ items:
   - { id: lighter, name: { zh: 打火机, en: Lighter }, desc: { zh: 厕所最里面那格地上捡的。, en: "Found on the floor of the last stall." } }
   - { id: card, name: { zh: 阿泽的学生证, en: Aze's student card }, desc: { zh: "303 里的。能拿在手里的证据。", en: "From 303. Proof you can hold." } }
   - { id: ledger, name: { zh: 登记本, en: Visitors' book }, desc: { zh: "值班室的。302 那行有个划掉的名字。", en: "From the office. A crossed-out name on the 302 line." } }
-modifiers:
-  - { kind: perStep, resource: fear, step: 25, value: -1, skill: reason, label: fear }
 ---
 
 # 302
 
-宿舍恐怖冒险的规则配置。上面的属性就是 Inkwright 游戏模式读取的 `GameConfig`,改过之后运行命令"生成游戏引擎 ink"重新生成 `_engine.ink`。
+宿舍恐怖冒险的规则配置。上面的属性就是 Inkwright 游戏模式读取的 `GameConfig`;规则、难度、五种技能和它们的声音、恐惧和体力、同伴的恐惧和信任、恐惧修正都来自规则包 `packs/narrative-check`(Inkwright 叙事检定包的一份副本,`system:` 指向它),这里只写这个游戏自己的东西。改过之后运行命令"生成游戏引擎 ink"重新生成 `_engine.ink`。
 
 - id 全部英文(ink 变量名、选项标签里用);玩家看到的名字在 `name: { zh, en }` 里。
 - 资源:恐惧是心理血条,体力是身体血条,电量是手机的光,“天亮前”是还剩几个小时(每去一个地方减一,归零天亮)。
